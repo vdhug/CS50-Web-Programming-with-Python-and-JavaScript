@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+	Details
+{% endblock %}
+
+{% block body %}
+	<h1>Details - {{book.title}}</h1>
+	
+	<div class="form-group">
+		<h2 class="form-control">ISBN Number - {{book.isbn}}</h2>
+		<h2 class="form-control">Title - {{book.title}}</h2>
+		<h2 class="form-control">Author - {{book.author}}</h2>
+		<h2 class="form-control">Year - {{book.year}}</h2>
+		<h2 class="form-control">Average Score - {{book.average_rating}} (Goodreads)</h2>
+		<h2 class="form-control">Ratings - {{book.reviews_count}} (Goodreads)</h2>
+	</div>
+
+
+	<div class="form-group">
+		<a href="{{ url_for('review', isbn=book.isbn) }}">Submit a review</a>		
+	</div>
+
+	<div class="form-group">
+		<a href="{{ url_for('books') }}">Return to search</a>
+	</div>
+
+
+{% endblock %}

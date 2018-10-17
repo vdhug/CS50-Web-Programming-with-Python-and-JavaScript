@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+	Books
+{% endblock %}
+
+{% block body %}
+	<h1>Books</h1>
+
+	<div class="form-group">
+		<form action="{{ url_for('books') }}" method="post">
+		<div class="form-group">
+			<input class="form-control" type="text" name="search-text" placeholder="Search text">
+		</div>
+		<div class="form-group">
+			<button class="btn btn-primary">Search</button>
+		</div>
+	</form>
+	</div>
+	
+	{% if books is defined and books|length > 0 %}
+	<div class="form-group">	
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">ISBN</th>
+					<th scope="col">Title</th>
+					<th scope="col">Author</th>
+					<th scope="col">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for book in books %}
+					<tr>
+						<td>{{ book.isbn }}</td>
+						<td>{{ book.title }}</td>
+						<td>{{ book.author }}</td>
+						<td><a href="{{ url_for('details', isbn=book.isbn) }}">Details</a></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% else %}
+	<div class="form-group">
+		<output>No matches found</output>
+	</div>
+	{% endif %}
+	
+	<div class="form-group">
+		<a href="{{ url_for('index') }}">Return to index</a>
+	</div>
+	
+{% endblock %}
