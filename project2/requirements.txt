@@ -1,0 +1,7 @@
+Flask
+Flask-SocketIO
+Flask
+Flask-Session
+psycopg2
+SQLAlchemy
+flask_sqlalchemy

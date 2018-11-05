@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+
+{% block head %}
+	<script type="text/javascript" src="{{ url_for('static', filename='channel.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+	My Channels
+{% endblock %}
+
+
+
+{% block body %}
+	<h1>Other Channels</h1>
+	
+	{% if others_channels is defined and others_channels|length > 0 %}
+	<div class="form-group">	
+		<table class="table" >
+			<thead>
+				<tr>
+					<th scope="col">Channel Name</th>
+				</tr>
+			</thead>
+			<tbody id="channels">
+				{% for channel in others_channels %}
+					<tr>
+						<td>{{ channel.name }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% else %}
+	<div class="form-group">
+		<output>There is no more channel to join.</output>
+	</div>
+	{% endif %}
+	
+	<div class="form-group">
+		<a href="{{ url_for('index') }}">Return to index</a>
+	</div>
+	
+{% endblock %}
