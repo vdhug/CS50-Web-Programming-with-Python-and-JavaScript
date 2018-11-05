@@ -2,7 +2,7 @@
 
 
 {% block head %}
-	<script type="text/javascript" src="{{ url_for('static', filename='channel.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='othersChannels.js') }}"></script>
 {% endblock %}
 
 {% block title %}
@@ -20,12 +20,14 @@
 			<thead>
 				<tr>
 					<th scope="col">Channel Name</th>
+					<th scope="col">Action</th>
 				</tr>
 			</thead>
 			<tbody id="channels">
 				{% for channel in others_channels %}
 					<tr>
 						<td>{{ channel.name }}</td>
+						<td><a href="{{ url_for('channel', id=channel.id) }}">Join Channel</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

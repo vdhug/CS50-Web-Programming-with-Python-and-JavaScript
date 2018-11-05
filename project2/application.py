@@ -6,7 +6,7 @@ from flask import Flask, session, render_template, request, session, jsonify
 from flask_session import Session
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy import and_
 
 from models import *
 
@@ -82,30 +82,35 @@ def register():
 
 @socketio.on("create channel")
 def socket_create_channel(data):
-    c = Channel(name=data['name'], user_id=session['user'].id)
-    c = c.add_channel()
-    data['id'] = c.id 
-    emit("channel created", data, broadcast=True)
-    
+    channel = Channel.query.filter_by(name=data['name']).first()
+    if channel == None:
+        c = Channel(name=data['name'], user_id=session['user'].id)
+        c = c.add_channel()
+        c.add_user()
+        data['id'] = c.id 
+        emit("channel created", data, broadcast=True)    
+     
 
-
-@app.route("/create_channel", methods=["GET"])
-def create_channel():
+@app.route("/channel/<string:id>", methods=["GET"])
+def channel(id):
     if request.method == "GET":
-       return render_template("create_channel.html")
-       
-
-@app.route("/join/<string:id>", methods=["GET"])
-def join(id):
-    if request.method == "GET":
+        # Checks if the user is in this channel
+        u = User_has_channel.query.filter(and_(User_has_channel.user_id == session['user'].id, User_has_channel.channel_id == id)).first()
         c = Channel.query.get(id)
-        c.add_user_in_channel(session['user'].id)
+        if u == None:
+            c.add_user_in_channel(session['user'].id)
 
-        return render_template("messages.html", channel=c)
+        return render_template("messages.html", channel=c, messages=c.messages)
+
 
 @app.route("/my_channels", methods=["GET"])
 def my_channels():
-    my_channels = Channel.query.filter_by(user_id=session["user"].id).all()
+    channels = User_has_channel.query.filter_by(user_id=session["user"].id)
+    my_channels = []
+    for channel in channels:
+        c = Channel.query.filter_by(id=channel.channel_id).first()
+        my_channels.append(c)
+
     return render_template("my_channels.html", my_channels=my_channels)
 
 

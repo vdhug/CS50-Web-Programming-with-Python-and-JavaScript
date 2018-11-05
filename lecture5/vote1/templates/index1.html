@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script src="{{ url_for('static', filename='index.js') }}"></script>
+        <title>Vote</title>
+    </head>
+    <body>
+        <div>Yes Votes: <span id="yes">{{ votes["yes"] }}</span></div>
+        <div>No Votes: <span id="no">{{ votes["no"] }}</span></div>
+        <div>Maybe Votes: <span id="maybe">{{ votes["maybe"] }}<span></div>
+        <hr>
+        <button data-vote="yes">Yes</button>
+        <button data-vote="no">No</button>
+        <button data-vote="maybe">Maybe</button>
+    </body>
+</html>
