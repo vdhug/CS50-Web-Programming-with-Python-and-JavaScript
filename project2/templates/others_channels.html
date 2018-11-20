@@ -14,7 +14,7 @@
 {% block body %}
 	<h1>Other Channels</h1>
 	
-	{% if others_channels is defined and others_channels|length > 0 %}
+	
 	<div class="form-group">	
 		<table class="table" >
 			<thead>
@@ -33,7 +33,7 @@
 			</tbody>
 		</table>
 	</div>
-	{% else %}
+	{% if others_channels is not defined and others_channels|length <= 0 %}
 	<div class="form-group">
 		<output>There is no more channel to join.</output>
 	</div>

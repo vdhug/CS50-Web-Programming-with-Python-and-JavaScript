@@ -24,24 +24,26 @@
 	</form>
 	<h1>My Channels</h1>
 	
-	{% if my_channels is defined and my_channels|length > 0 %}
+	
 	<div class="form-group">	
 		<table class="table">
 			<thead>
 				<tr>
 					<th scope="col">Channel Name</th>
+					<th scope="col">Action</th>
 				</tr>
 			</thead>
 			<tbody id="channels">
 				{% for channel in my_channels %}
 					<tr>
 						<td>{{ channel.name }}</td>
+						<td><a href="{{ url_for('channel', id=channel.id) }}">Chat</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	</div>
-	{% else %}
+	{% if my_channels is not defined and my_channels|length <= 0 %}
 	<div class="form-group">
 		<output>You do not participate in any channel.</output>
 	</div>

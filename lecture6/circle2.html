@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+        <svg id="svg" style="width:100%; height:800px"/>
+    </body>
+    <script>
+
+        const svg = d3.select('#svg');
+
+        const c = svg.append('circle')
+                     .attr('cx', 200)
+                     .attr('cy', 200)
+                     .attr('r', 50)
+                     .style('fill', 'blue');
+
+        c.transition()
+         .duration(1000)
+         .attr('cx', 500)
+         .attr('cy', 500)
+         .style('fill', 'red');
+
+    </script>
+</html>

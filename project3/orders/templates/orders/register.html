@@ -1,0 +1,33 @@
+{% extends "orders/layout.html" %}
+
+{% block log %}
+	<a class="glyphicon glyphicon-log-in" href="{% url 'login' %}" title="Login"></a>
+{% endblock %}
+
+{% block body %}
+	<section class="container">
+		<h2 class="subtitulo">Register</h2>
+		<form class="form grid-8" action="{% url 'register' %}" method="post">
+    		{% csrf_token %}
+			<h2>First Name</h2>
+			<input autocomplete="off" type="text" name="first_name">
+
+			<h2>Last Name</h2>
+			<input autocomplete="off" type="text" name="last_name">
+
+			<h2>Username</h2>
+			<input autocomplete="off" type="text" name="username">
+
+			<h2>Email</h2>
+			<input type="text" name="email">
+
+			<h2>Password</h2>
+			<input type="password" name="password">
+
+			<input class="btn" type="submit" value="Register">
+			<p class="chamada-registro">Already a member? <a href="{% url 'login' %}">Login here</a></p>
+		</form>
+
+	</section>
+
+{% endblock %}

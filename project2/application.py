@@ -101,6 +101,17 @@ def channel(id):
             c.add_user_in_channel(session['user'].id)
 
         return render_template("messages.html", channel=c, messages=c.messages)
+    
+
+@socketio.on("send message")
+def socket_send_message(data):
+    # Checks if the user is in this channel
+    channel_id = data["channel_id"]
+    message = data["message"]
+    channel = Channel.query.get(channel_id)
+    channel.add_message(message, session['user'].id)
+    data['user_id'] = session['user'].id
+    emit("message received", data, broadcast=True)
 
 
 @app.route("/my_channels", methods=["GET"])

@@ -7,6 +7,7 @@
                 // Have each button change the color of the heading
                 document.querySelectorAll('.color-change').forEach(function(button) {
                     button.onclick = function() {
+                        alert(button.dataset.color);
                         document.querySelector('#hello').style.color = button.dataset.color;
                     };
                 });
@@ -17,7 +18,7 @@
     </head>
     <body>
         <h1 id="hello">Hello!</h1>
-        <button class="color-change" data-color="red">Red</button>
+        <button class="color-change" data-color="">Red</button>
         <button class="color-change" data-color="blue">Blue</button>
         <button class="color-change" data-color="green">Green</button>
     </body>

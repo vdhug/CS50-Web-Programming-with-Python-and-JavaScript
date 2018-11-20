@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Webpage</title>
+        <script>
+
+            document.addEventListener('DOMContentLoaded', () => {
+
+                // Start by loading first page.
+                load_page('first');
+
+                // Set links up to load new pages.
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.onclick = () => {
+                        load_page(link.dataset.page);
+                        return false;
+                    };
+                });
+            });
+
+            // Renders contents of new page in main view.
+            function load_page(name) {
+                const request = new XMLHttpRequest();
+                request.open('GET', `/${name}`);
+                request.onload = () => {
+                    const response = request.responseText;
+                    document.querySelector('#body').innerHTML = response;
+                };
+                request.send();
+            }
+
+        </script>
+    </head>
+    <body>
+        <ul id="nav">
+            <li><a href="" class="nav-link" data-page="first">First Page</a></li>
+            <li><a href="" class="nav-link" data-page="second">Second Page</a></li>
+            <li><a href="" class="nav-link" data-page="third">Third Page</a></li>
+        </ul>
+        <hr>
+        <div id="body">
+        </div>
+    </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Webpage</title>
+        <style>
+            li {
+                line-height: 30px;
+            }
+            img {
+                height: 30px;
+                vertical-align: middle;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+        <script id="result" type="text/template">
+            <li>
+                You rolled:
+                {{#each values}}
+                    <img alt="{{ this }}" title="{{ this }}" src="img/{{ this }}.png">
+                {{/each}}
+                (Total: {{ total }})
+            </li>
+        </script>
+        <script>
+
+            // Template for roll results
+            const template = Handlebars.compile(document.querySelector('#result').innerHTML);
+
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector('#roll').onclick = ()  => {
+
+                    // Generate random rolls.
+                    const counter = parseInt(document.querySelector('#counter').value);
+                    const rolls = [];
+                    let total = 0;
+                    for (let i = 0; i < counter; i++) {
+                        const value = Math.floor(Math.random() * 6) +  1;
+                        rolls.push(value);
+                        total += value;
+                    };
+
+                    // Add roll results to DOM.
+                    const content = template({'values': rolls, 'total': total});
+                    document.querySelector('#rolls').innerHTML += content;
+                };
+            });
+        </script>
+    </head>
+    <body>
+        <input id="counter" type="number" placeholder="Number of Rolls" min="1" value="1">
+        <button id="roll">Roll</button>
+        <ul id="rolls">
+        </ul>
+    </body>
+</html>

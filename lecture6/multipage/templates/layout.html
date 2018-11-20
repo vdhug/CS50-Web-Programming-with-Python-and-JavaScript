@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Webpage</title>
+    </head>
+    <body>
+        <ul id="nav">
+            <li><a href="{{ url_for('first') }}">First Page</a></li>
+            <li><a href="{{ url_for('second') }}">Second Page</a></li>
+            <li><a href="{{ url_for('third') }}">Third Page</a></li>
+        </ul>
+        <hr>
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,120 @@
+{% extends "orders/layout.html" %}
+
+{% block log %}
+	{% if user %}
+		<a class="glyphicon glyphicon-log-out" href="{% url 'logout' %}" title="Logout"></a>
+	{% else %}
+		<a class="glyphicon glyphicon-log-in" href="{% url 'login' %}" title="Login"></a>
+	{% endif %}
+{% endblock %}
+
+{% block body %}
+	<section class="container">
+		<h2 class="subtitulo">Our Menu</h2>
+		{% for type in typesOfPizza %}
+			<div class="menu-item grid-8">
+				<h2>{{type.name}} Pizza</h2>
+				<ul>
+				{% for pizza in pizzas %}
+					{% for price in pizza.prices_of_pizza.all %}
+
+					{% if price.sizeOfPizza.typeOfPizza.id == type.id %}
+					<li>
+						<div class="button">
+							<a data-price="{{price.id}}" href="#"><span id="{{price.id}}" class="pizza glyphicon glyphicon-shopping-cart pizza" type="button" title="Add to cart"></a>
+						</div>
+						<span>
+								<sup>U$</sup>{{price.price}}
+						</span>
+					
+						<div>
+							<h3>{{pizza.name}} - {{price.size}} size</h3>
+							<p></p>
+						</div>
+					</li>
+
+					{% endif %}
+
+					{% endfor %}
+				{% endfor %}
+				</ul>	
+			</div>
+		{% endfor %}
+
+		<div class="menu-item grid-8">
+			
+			<h2>Dinners</h2>
+			<ul>
+			{% for dinner in dinners %}
+				{% for price in dinner.prices_of_dinner.all %}
+				<li>
+					<div class="button">
+						<a href="#"><span id="{{price.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+					</div>
+					<span><sup>U$</sup>{{price.price}}</span>					
+					<div>
+						<h3>{{dinner.name}} - {{price.size}} size</h3>
+					</div>
+				</li>
+				{% endfor %}
+			{% endfor %}
+			</ul>	
+		</div>		
+
+		<div class="menu-item grid-8">
+			
+			<h2>Subs</h2>
+			<ul>
+			{% for sub in subs %}
+				{% for price in sub.prices_of_sub.all %}
+				<li>
+					<div class="button">
+						<a href="#"><span id="{{price.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+					</div>
+					<span><sup>U$</sup>{{price.price}}</span>
+					<div>
+						<h3>{{sub.name}} - {{price.size}} size</h3>
+					</div>
+				</li>
+				{% endfor %}
+			{% endfor %}
+			</ul>	
+		</div>	
+
+		<div class="menu-item grid-8">
+			
+			<h2>Pastas</h2>
+			<ul>
+			{% for pasta in pastas %}
+				<li>
+					<div class="button">
+						<a href="#"><span id="{{pasta.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+					</div>
+					<span><sup>U$</sup>{{pasta.price}}</span>
+					<div>
+						<h3>{{pasta.name}}</h3>
+					</div>
+			</li>
+			{% endfor %}
+			</ul>	
+		</div>		
+
+		<div class="menu-item grid-8">
+			
+			<h2>Salads</h2>
+			<ul>
+			{% for salad in salads %}
+				<li>
+					<div class="button">
+						<a href="#"><span id="{{salad.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+					</div>
+					<span><sup>U$</sup>{{salad.price}}</span>
+					<div>
+						<h3>{{salad.name}}</h3>
+					</div>
+			</li>
+			{% endfor %}
+			</ul>	
+		</div>					
+	</section>
+{% endblock %}
