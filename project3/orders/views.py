@@ -3,11 +3,53 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+import pdb
 
 from .models import *
 
 # Create your views here.
 def index(request):
+
+	if not request.session.has_key('pizza'):
+		request.session['pizza'] = []
+	
+	if not request.session.has_key('dinner'):
+		request.session['dinner'] = []
+	
+	if not request.session.has_key('sub'):
+		request.session['sub'] = []
+	
+	if not request.session.has_key('pasta'):
+		request.session['pasta'] = []
+	
+	if not request.session.has_key('salad'):
+		request.session['salad'] = []
+	
+	pizzas = []
+	for dic in request.session['pizza']:
+		pizzas.append(int(list(dic)[0]))
+	
+	dinners = []
+	for dic in request.session['dinner']:
+		dinners.append(int(list(dic)[0]))
+	
+	subs = []
+	for dic in request.session['sub']:
+		subs.append(int(list(dic)[0]))
+	
+	pastas = []
+	for dic in request.session['pasta']:
+		pastas.append(int(list(dic)[0]))
+	
+	salads = []
+	for dic in request.session['salad']:
+		salads.append(int(list(dic)[0]))
+
+	items = {"pizza": pizzas, "dinner": dinners, "sub": subs, "pasta": pastas, "salad": salads }
+	
 	context = {
 	   "typesOfPizza": TypeOfPizza.objects.all(),
 	   "pizzas": Pizza.objects.all(),
@@ -15,6 +57,7 @@ def index(request):
 	   "salads": Salad.objects.all(),
 	   "dinners": Dinner.objects.all(),
 	   "user": request.user.is_authenticated,
+	   "items": items,
 	   "subs": Sub.objects.all()
     }
     
@@ -60,3 +103,229 @@ def auth_login(request):
 def auth_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
+
+
+@csrf_exempt
+def add_item(request):
+	try:
+		price_id = request.GET["price_id"]
+		item = request.GET["item"]
+		# Saving the items added in the shopping cart in a tuple ItemId: Type(e.g. pizza)
+		if not request.session.has_key(item):
+			request.session[item] = []
+
+		items = request.session[item][:]
+		items.append({price_id: 1})
+		request.session[item] = items;
+
+		return HttpResponse(f"{item} - {request.session[item]}")
+	
+	except Exception as e:
+		return HttpResponse("Failure!", {"success": False})
+
+
+@csrf_exempt
+def edit_quantity(request):
+	try:
+		price_id = request.GET["price_id"]
+		item = request.GET["item"]
+		old_quantity = request.GET["old_quantity"]
+		new_quantity = request.GET["new_quantity"]
+		# Saving the items added in the shopping cart in a tuple ItemId: Type(e.g. pizza)
+		if not request.session.has_key(item):
+			request.session[item] = []
+
+		items = request.session[item][:]
+		items.remove({price_id: int(old_quantity)})
+		items.append({price_id: int(new_quantity)})
+		request.session[item] = items;
+
+		return HttpResponse(f"{item} - {request.session[item]}")
+	
+	except Exception as e:
+		return HttpResponse("Failure!", {"success": False})
+
+@csrf_exempt
+def remove_item(request):
+	try:
+		price_id = request.GET["price_id"]
+		item = request.GET["item"]
+		# Saving the items added in the shopping cart in a tuple ItemId: Type(e.g. pizza)
+		if not request.session.has_key(item):
+			request.session[item] = []
+
+		items = request.session[item][:]
+		value = 0
+		for i in range(len(items)):
+			if list(items[i])[0] == price_id:
+				quantity = items[i][list(items[i])[0]]
+				del items[i]
+				request.session[item] = items;
+				return HttpResponse(quantity)
+
+		return HttpResponse(f"{item} - {items}")
+	
+	except Exception as e:
+		return HttpResponse(f"Failure! {str(e)} - {items}", {"success": False})
+
+
+def cart(request):
+
+	# Checking if the key item exist in the session 
+	if not request.session.has_key('pizza'):
+		request.session['pizza'] = []
+
+	if not request.session.has_key('dinner'):
+		request.session['dinner'] = []
+	
+	if not request.session.has_key('sub'):
+		request.session['sub'] = []
+	
+	if not request.session.has_key('pasta'):
+		request.session['pasta'] = []
+	
+	if not request.session.has_key('salad'):
+		request.session['salad'] = []
+
+	if not request.session.has_key('progress'):
+		request.session['progress'] = "cart"
+	
+	if not request.session.has_key('address'):
+		pdb.set_trace()
+		request.session['address'] = {
+					"street_name": "",
+					"street_number": "",
+					"apartment": "",
+					"reference": "",
+					"postal_code": "",
+					"neighborhoor": "",
+					"state": "",
+					"city": ""
+		}
+
+	pizzas_aux = {}
+	for dic in request.session['pizza']:
+		pizzas_aux[list(dic)[0]]=dic[list(dic)[0]]
+	
+	dinners_aux = {}
+	for dic in request.session['dinner']:
+		dinners_aux[list(dic)[0]]=dic[list(dic)[0]]
+	
+	subs_aux = {}
+	for dic in request.session['sub']:
+		subs_aux[list(dic)[0]]=dic[list(dic)[0]]
+	
+	pastas_aux = {}
+	for dic in request.session['pasta']:
+		pastas_aux[list(dic)[0]]=dic[list(dic)[0]]
+	
+	salads_aux = {}
+	for dic in request.session['salad']:
+		salads_aux[list(dic)[0]]=dic[list(dic)[0]]
+
+	total = 0
+	# Getting all elements of type pizzas 
+	pizzas = []
+	for pizza in list(pizzas_aux):
+		try:
+			order = PriceOfPizza.objects.get(pk=pizza)
+			pizzas.append((order, pizzas_aux[pizza]))
+			total += order.price * pizzas_aux[pizza]
+		except PriceOfPizza.DoesNotExist:
+			raise Http404("Item in the order does not exist")
+	
+	# Getting all elements of type dinner 
+	dinners = []
+	for dinner in dinners_aux:
+		try:
+			order = PriceOfDinner.objects.get(pk=dinner)
+			dinners.append((order, dinners_aux[dinner]))
+			total += order.price * dinners_aux[dinner]
+		except PriceOfDinner.DoesNotExist:
+			raise Http404("Item in the order does not exist")
+
+	# Getting all elements of type sub 
+	subs = []
+	for sub in subs_aux:
+		try:
+			order = PriceOfSub.objects.get(pk=sub)
+			subs.append((order, subs_aux[sub]))
+			total += order.price * subs_aux[sub]
+		except PriceOfSub.DoesNotExist:
+			raise Http404("Item in the order does not exist")
+
+	# Getting all elements of type pasta 
+	pastas = []
+	for pasta in pastas_aux:
+		try:
+			order = Pasta.objects.get(pk=pasta)
+			pastas.append((order, pastas_aux[pasta]))
+			total += order.price * pastas_aux[pasta]
+		except Pasta.DoesNotExist:
+			raise Http404("Item in the order does not exist")
+	
+	# Getting all elements of type salad 
+	salads = []
+	for salad in salads_aux:
+		try:
+			order = Salad.objects.get(pk=salad)
+			salads.append((order, salads_aux[salad]))
+			total += order.price * salads_aux[salad]
+		except Salad.DoesNotExist:
+			raise Http404("Item in the order does not exist")
+
+	address = request.session['address']
+	
+	context = {
+				"pizzas": pizzas,
+				"dinners": dinners,
+				"subs": subs,
+				"pastas": pastas,
+				"salads": salads,
+				"total": total,
+				"toppings": Topping.objects.all(),
+				"progress": request.session['progress'],
+				"address": address,
+	   			"user": request.user.is_authenticated
+			}
+	return render(request, "orders/cart.html", context)
+
+def update_progress(request):
+
+	try:
+		# Progress is Cart -> Place Order -> Details -> Payment
+		
+		#pdb.set_trace()
+		operation = request.GET["operation"]
+		progress = request.GET["progress"]
+		if operation == "next":
+			if progress == "cart":
+				# Go to next step "place"
+				request.session['progress'] = "place-order"
+
+			if progress == "place-order":
+				
+				address = {
+					"street_name": request.GET["street_name"],
+					"street_number": request.GET["street_number"],
+					"apartment": request.GET["apartment"],
+					"reference": request.GET["reference"],
+					"postal_code": request.GET["postal_code"],
+					"neighborhoor": request.GET["neighborhoor"],
+					"city": request.GET["city"],
+					"state": request.GET["state"]
+				} 
+				request.session['address'] = address
+				request.session['progress'] = "finish"
+
+		if operation == "previous":
+			if progress == "place-order":
+				request.session['progress'] = "cart"
+
+			if progress == "finish":
+				request.session['progress'] = "place-order"
+		#pdb.set_trace()
+		return HttpResponse("success")
+
+	except Exception as e:
+		return HttpResponse(f"Failure! {str(e)} - {items}", {"success": False})

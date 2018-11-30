@@ -1,0 +1,250 @@
+{% extends "orders/layout.html" %}
+
+// Loading helpers functions to use in the template
+{% load helpers %}
+
+// Loading static JS files
+{% load staticfiles%}
+
+
+{% block title %}
+	Rest
+{% endblock %}
+
+{% block js %}
+	<script src="{% static 'orders/js/cart.js' %}" type="text/javascript"></script>
+{% endblock %}
+
+{% block log %}
+	{% if user %}
+		<a class="icon-exit" href="{% url 'logout' %}" title="Logout"></a>
+	{% else %}
+		<a class="icon-enter" href="{% url 'login' %}" title="Login"></a>
+	{% endif %}
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<input id="status-progress" style="display: none;" type="text" value="{{progress}}">
+		<nav class="grid-16 cart">
+			<ul>
+				<li style="width: 33%;" class="status-current">Cart</li>
+				<li id="status-place-order" style="width: 33.2%;">Place Order</li>
+				<li id="status-payment" style="width: 33%;">Finish</li>
+			</ul>
+		</nav>
+	</div>
+
+	{% if progress|stringIsEqual:"cart" %}
+	<section class="container">
+		<div class="grid-16 cart-head">
+			<ul>
+				<li style="width: 25%">Item</li>
+				<li style="width: 20%">Unit Price</li>
+				<li style="width: 20%">Quantity</li>
+				<li style="width: 15%">Subtotal</li>
+				<li style="width: 15%">Operation</li>
+			</ul>
+		</div>
+		
+		<div class="grid-16 cart-body">
+			{% for pizza, quantity in pizzas %}
+			<ul id="pizza-{{pizza.id}}-ul" class="cart-item">
+				<li style="width: 25%">{{pizza.sizeOfPizza.typeOfPizza}} {{pizza.pizza.name}} - {{pizza.sizeOfPizza.size}}</li>
+				<li style="width: 20%">{{pizza.price}} US</li>
+
+				<li style="width: 20%">
+					<a href="#" class="subtract" data-type="pizza" data-id="{{pizza.id}}" data-price="{{pizza.price}}"><span class="icon-minus"></span></a>
+						<input id="pizza-{{pizza.id}}-quantity" class="cart-input item" data-type="pizza" data-id="{{pizza.id}}" data-price="{{pizza.price}}" type="number" min="0" value="{{quantity}}">
+					<a href="#" class="add" data-type="pizza" data-id="{{pizza.id}}" data-price="{{pizza.price}}"><span class="icon-plus"></span></a>
+				</li>
+
+				<li id="pizza-{{pizza.id}}" data-total="{{pizza.price|get_multiply:quantity}}" data-price="{{pizza.price}}" style="width: 15%">{{pizza.price|get_multiply:quantity}} US</li>
+
+				<li style="width: 15%"><a href="#" class="delete-item" data-id="{{pizza.id}}" data-type="pizza" data-price="{{pizza.price}}"><span class="icon-cross"></span></a></li>
+			</ul>
+			{% endfor %}
+
+			<!-- Iterates over Dinners -->
+			{% for dinner, quantity in dinners %}
+			<ul>
+				<li style="width: 25%">{{dinner.dinner.name}} - {{dinner.size}} size</li>
+				<li style="width: 20%">{{dinner.price}} US</li>
+				
+				<li style="width: 20%">
+					<a href="#" class="subtract" data-type="dinner" data-id="{{dinner.id}}" data-price="{{dinner.price}}"><span class="icon-minus"></span></a>
+						<input id="dinner-{{dinner.id}}-quantity" class="cart-input item" data-type="dinner" data-id="{{dinner.id}}" data-price="{{dinner.price}}" type="number" min="0" value="{{quantity}}">
+					<a href="#" class="add" data-type="dinner" data-id="{{dinner.id}}" data-price="{{dinner.price}}"><span class="icon-plus"></span></a>
+				</li>
+
+				<li id="dinner-{{dinner.id}}" data-total="{{dinner.price|get_multiply:quantity}}" data-price="{{dinner.price}}" style="width: 15%">{{dinner.price|get_multiply:quantity}} US</li>
+				<li style="width: 15%"><a href="#">Delete</a></li>
+			</ul>
+			{% endfor %}
+
+			<!-- Iterates over Subs -->
+			{% for sub, quantity in subs %}
+			<ul>
+				<li style="width: 25%">{{sub.sub.name}} - {{sub.size}} size</li>
+				<li style="width: 20%">{{sub.price}} US</li>
+				
+				<li style="width: 20%">
+					<a href="#" class="subtract" data-type="sub" data-id="{{sub.id}}" data-price="{{sub.price}}"><span class="icon-minus"></span></a>
+						<input id="sub-{{sub.id}}-quantity" class="cart-input item" data-type="sub" data-id="{{sub.id}}" data-price="{{sub.price}}" type="number" min="0" value="{{quantity}}">
+					<a href="#" class="add" data-type="sub" data-id="{{sub.id}}" data-price="{{sub.price}}"><span class="icon-plus"></span></a>
+				</li>
+
+				<li id="sub-{{sub.id}}" data-total="{{sub.price|get_multiply:quantity}}" data-price="{{sub.price}}" style="width: 15%">{{sub.price|get_multiply:quantity}} US</li>
+
+				<li style="width: 15%"><a href="#">Delete</a></li>
+			</ul>
+			{% endfor %}
+
+			<!-- Iterates over Pastas -->
+			{% for pasta, quantity in pastas %}
+			<ul>
+				<li style="width: 25%">{{pasta.name}}</li>
+				<li style="width: 20%">{{pasta.price}} US</li>
+				
+				<li style="width: 20%">
+					<a href="#" class="subtract" data-type="pasta" data-id="{{pasta.id}}" data-price="{{pasta.price}}"><span class="icon-minus"></span></a>
+						<input id="pasta-{{pasta.id}}-quantity" class="cart-input item" data-type="pasta" data-id="{{pasta.id}}" data-price="{{pasta.price}}" type="number" min="0" value="{{quantity}}">
+					<a href="#" class="add" data-type="pasta" data-id="{{pasta.id}}" data-price="{{pasta.price}}"><span class="icon-plus"></span></a>
+				</li>
+
+				<li id="pasta-{{pasta.id}}" data-total="{{pasta.price|get_multiply:quantity}}" data-price="{{pasta.price}}" style="width: 15%">{{pasta.price|get_multiply:quantity}} US</li>
+				<li style="width: 15%"><a href="#">Delete</a></li>
+			</ul>
+			{% endfor %}
+
+			<!-- Iterates over Salads -->
+			{% for salad, quantity in salads %}
+			<ul>
+				<li style="width: 25%">{{salad.name}}</li>
+				<li style="width: 20%">{{salad.price}} US</li>
+				
+				<li style="width: 20%">
+					<a href="#" class="subtract" data-type="salad" data-id="{{salad.id}}" data-price="{{salad.price}}"><span class="icon-minus"></span></a>
+						<input id="salad-{{salad.id}}-quantity" class="cart-input item" data-type="salad" data-id="{{salad.id}}" data-price="{{salad.price}}" type="number" min="0" value="{{quantity}}">
+					<a href="#" class="add" data-type="salad" data-id="{{salad.id}}" data-price="{{salad.price}}"><span class="icon-plus"></span></a>
+				</li>
+
+				<li id="salad-{{salad.id}}" data-total="{{salad.price|get_multiply:quantity}}" data-price="{{salad.price}}" style="width: 15%">{{salad.price|get_multiply:quantity}} US</li>
+				<li style="width: 15%"><a href="#">Delete</a></li>
+			</ul>
+			{% endfor %}
+		</div>
+
+		<div class="grid-16 cart-head">
+			<ul>
+				<li>Subtotal</li>
+				<p id="total-amount" data-total= "{{total}}">{{total}}<sup>US</sup></p>
+			</ul>
+		</div>
+	</section>
+	{% endif %}
+
+	{% if progress|stringIsEqual:"place-order" %}
+	<section class="container">
+		<h2 class="subtitulo">Adress</h2>
+		<form class="form grid-16" action="{% url 'login' %}" method="post">
+    		{% csrf_token %}
+
+			<h2>Street Name</h2>
+			<input type="text" name="street-name" value="{{address.street_name}}">
+
+			<h2>Street Number</h2>
+			<input type="text" name="street-number" value="{{address.street_number}}">
+
+			<h2>Apartment, suite, unit</h2>
+			<input type="text" name="apartment" placeholder="Optional" value="{{address.apartment}}">
+
+			<h2>Reference</h2>
+			<input type="text" name="reference" value="{{address.reference}}">
+
+			<h2>Postal Code</h2>
+			<input type="text" name="postal-code" value="{{address.postal_code}}">
+
+			<h2>Neighborhoor</h2>
+			<input type="text" name="neighborhoor" value="{{address.neighborhoor}}">
+
+			<h2>City</h2>
+			<input type="text" name="city" value="{{address.city}}">
+
+			<h2>State</h2>
+			<input type="text" name="state" value="{{address.state}}">
+
+			{% if message %}
+				<div>
+					{{ message }}
+				</div>
+			{% endif %}
+			
+		</form>
+	</section>
+	{% endif %}
+
+	<!-- Section that allow to the user select the toppings in the pizzas  -->
+	{% if progress|stringIsEqual:"finish" %}
+	<section class="container">
+		<h2 class="subtitulo">Adress</h2>
+		<form class="form grid-16" action="{% url 'login' %}" method="post">
+    		{% csrf_token %}
+
+			<h2>Street Name</h2>
+			<input type="text" name="street-name" value="{{address.street_name}}">
+
+			<h2>Street Number</h2>
+			<input type="text" name="street-number" value="{{address.street_number}}">
+
+			<h2>Apartment, suite, unit</h2>
+			<input type="text" name="apartment" placeholder="Optional" value="{{address.apartment}}">
+
+			<h2>Reference</h2>
+			<input type="text" name="reference" value="{{address.reference}}">
+
+			<h2>Postal Code</h2>
+			<input type="text" name="postal-code" value="{{address.postal_code}}">
+
+			<h2>Neighborhoor</h2>
+			<input type="text" name="neighborhoor" value="{{address.neighborhoor}}">
+
+			<h2>City</h2>
+			<input type="text" name="city" value="{{address.city}}">
+
+			<h2>State</h2>
+			<input type="text" name="state" value="{{address.state}}">
+
+			{% if message %}
+				<div>
+					{{ message }}
+				</div>
+			{% endif %}
+			
+		</form>
+	</section>
+	{% endif %}
+
+	<section class="container">
+		{% if progress|stringIsDifferent:"payment" %}
+		<div class="cart-call">
+			<a href="#" class="btn-cart" data-progress="{{progress}}" data-operation="next">Next <span class="glyphicon glyphicon-menu-right"></span></a>
+		</div>
+		{% endif %}
+
+		{% if progress|stringIsDifferent:"cart" %}
+		<div class="cart-call">
+			<a href="#" class="btn-cart btn-cart-previous" data-progress="{{progress}}" data-operation="previous"><span class="glyphicon glyphicon-menu-left"></span>Previous</a>
+		</div>
+		{% endif %}
+
+		{% if progress|stringIsEqual:"payment" %}
+		<div class="cart-call">
+			<a href="" class="btn-cart" data-progress="{{progress}}" data-operation="finish">Finish <span class="glyphicon glyphicon-menu-right"></span></a>
+		</div>
+		{% endif %}
+	</section>
+
+	
+	
+{% endblock %}

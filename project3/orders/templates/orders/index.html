@@ -1,10 +1,21 @@
 {% extends "orders/layout.html" %}
 
+// Loading static JS files
+{% load staticfiles%}
+
+{% block title %}
+	Rest
+{% endblock %}
+
+{% block js %}
+	<script src="{% static 'orders/js/index.js' %}" type="text/javascript"></script>
+{% endblock %}
+
 {% block log %}
 	{% if user %}
-		<a class="glyphicon glyphicon-log-out" href="{% url 'logout' %}" title="Logout"></a>
+		<a class="icon-exit" href="{% url 'logout' %}" title="Logout"></a>
 	{% else %}
-		<a class="glyphicon glyphicon-log-in" href="{% url 'login' %}" title="Login"></a>
+		<a class="icon-enter" href="{% url 'login' %}" title="Login"></a>
 	{% endif %}
 {% endblock %}
 
@@ -21,15 +32,20 @@
 					{% if price.sizeOfPizza.typeOfPizza.id == type.id %}
 					<li>
 						<div class="button">
-							<a data-price="{{price.id}}" href="#"><span id="{{price.id}}" class="pizza glyphicon glyphicon-shopping-cart pizza" type="button" title="Add to cart"></a>
+							{% if price.id in items.pizza %}
+								<a href="#"><span data-id="{{price.id}}" data-type="pizza" data-operation="remove" class="item itemIsSelected icon-cart" title="Remove from the cart"></a>
+							{% else %}
+								<a href="#"><span data-id="{{price.id}}" data-type="pizza" data-operation="add" class="item icon-cart" title="Add to cart"></a>
+							{% endif %}
+							
 						</div>
 						<span>
 								<sup>U$</sup>{{price.price}}
 						</span>
 					
 						<div>
-							<h3>{{pizza.name}} - {{price.size}} size</h3>
-							<p></p>
+							<h3>{{pizza.name}} - {{price.sizeOfPizza.size}} size</h3>
+							<p>{{pizza.description}}</p>
 						</div>
 					</li>
 
@@ -49,18 +65,22 @@
 				{% for price in dinner.prices_of_dinner.all %}
 				<li>
 					<div class="button">
-						<a href="#"><span id="{{price.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+						{% if price.id in items.dinner %}
+							<a href="#"><span data-id="{{price.id}}" data-type="dinner" data-operation="remove" class="item itemIsSelected icon-cart" type="button" title="Remove from the cart"></a>
+						{% else %}
+							<a href="#"><span data-id="{{price.id}}" data-type="dinner"  data-operation="add" class="item icon-cart" type="button" title="Add to cart"></a>
+						{% endif %}
 					</div>
 					<span><sup>U$</sup>{{price.price}}</span>					
 					<div>
 						<h3>{{dinner.name}} - {{price.size}} size</h3>
+						<p>{{dinner.description}}</p>
 					</div>
 				</li>
 				{% endfor %}
 			{% endfor %}
 			</ul>	
 		</div>		
-
 		<div class="menu-item grid-8">
 			
 			<h2>Subs</h2>
@@ -69,7 +89,11 @@
 				{% for price in sub.prices_of_sub.all %}
 				<li>
 					<div class="button">
-						<a href="#"><span id="{{price.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+						{% if price.id in items.sub %}
+							<a href="#"><span data-id="{{price.id}}" data-type="sub"  data-operation="remove" class="item itemIsSelected icon-cart" type="button" title="Remove from the cart"></a>
+						{% else %}
+							<a href="#"><span data-id="{{price.id}}" data-type="sub"  data-operation="add" class="item icon-cart" type="button" title="Add to cart"></a>
+						{% endif %}
 					</div>
 					<span><sup>U$</sup>{{price.price}}</span>
 					<div>
@@ -88,11 +112,16 @@
 			{% for pasta in pastas %}
 				<li>
 					<div class="button">
-						<a href="#"><span id="{{pasta.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+						{% if pasta.id in items.pasta %}
+							<a href="#"><span data-id="{{pasta.id}}" data-type="pasta"  data-operation="remove" class=" item itemIsSelected icon-cart" type="button" title="Remove from the cart"></a>
+						{% else %}
+							<a href="#"><span data-id="{{pasta.id}}" data-type="pasta" data-operation="add" class="item icon-cart" type="button" title="Add to cart"></a>
+						{% endif %}
 					</div>
 					<span><sup>U$</sup>{{pasta.price}}</span>
 					<div>
 						<h3>{{pasta.name}}</h3>
+						<p>{{pasta.description}}</p>
 					</div>
 			</li>
 			{% endfor %}
@@ -106,15 +135,20 @@
 			{% for salad in salads %}
 				<li>
 					<div class="button">
-						<a href="#"><span id="{{salad.id}}" class="glyphicon glyphicon-shopping-cart" type="button" title="Add to cart"></a>
+						{% if salad.id in items.salad %}
+							<a href="#"><span data-id="{{salad.id}}" data-type="salad" data-operation="remove" class="item itemIsSelected icon-cart" type="button" title="Remove from the cart"></a>
+						{% else %}
+							<a href="#"><span data-id="{{salad.id}}" data-type="salad" data-operation="add" class="item icon-cart" type="button" title="Add to cart"></a>
+						{% endif %}
 					</div>
 					<span><sup>U$</sup>{{salad.price}}</span>
 					<div>
 						<h3>{{salad.name}}</h3>
+						<p>{{salad.description}}</p>
 					</div>
 			</li>
 			{% endfor %}
 			</ul>	
-		</div>					
+		</div>				
 	</section>
 {% endblock %}

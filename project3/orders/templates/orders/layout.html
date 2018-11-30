@@ -3,12 +3,15 @@
 <html lang="pt-br">
 	<head>
 		<meta charset="utf-8">
-		<title>Rest</title>
+		<title>{% block title %}{% endblock %}</title>
+		{% block js %}{% endblock %}
 
 		<link href='https://fonts.googleapis.com/css?family=Alegreya+SC' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{% static 'orders/styles.css' %}"/>
-		<script src="{% static 'orders/js/index.js' %}" type="text/javascript"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="{% static 'orders/css/styles.css' %}"/>
+        
+		{% block script %}
+		{% endblock %}
 	</head>
 
 	<body>
@@ -16,13 +19,13 @@
 		<header>
 			<nav>
 				<ul>
-					<li><a class="glyphicon glyphicon-list-alt" title="Our Menu"  href="{% url 'index' %}"></a></li>
-					<li><a class="glyphicon glyphicon-shopping-cart" title="Shopping cart" href="{% url 'index' %}"></a></li>
+					<li><a class="icon-menu" title="Our Menu"  href="{% url 'index' %}"></a></li>
+					<li><a class="icon-cart" title="Shopping cart" href="{% url 'cart' %}"></a></li>
 					<li>{% block log %} {% endblock %}</li>
 				</ul>
 			</nav>
 
-			<h1><img src="{% static 'img/rest.png' %}" alt="Rest"></h1>
+			<h1><img src="{% static 'orders/img/rest.png' %}" alt="Rest"></h1>
 
 			<p>74 Winthrop Street – Harvard Square</p>
 			<p class="telefone">617-876-4897</p>

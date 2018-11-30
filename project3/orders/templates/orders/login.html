@@ -2,7 +2,7 @@
 
 
 {% block log %}
-	<a class="glyphicon glyphicon-log-in" href="{% url 'login' %}" title="Login"></a>
+	<a class="icon-enter" href="{% url 'login' %}" title="Login"></a>
 {% endblock %}
 
 {% block body %}
@@ -25,9 +25,6 @@
 			<input class="btn" type="submit" value="Login">
 			<p class="chamada-registro">Not a member? <a href="{% url 'register' %}">Register here</a></p>
 		</form>
-
-
-
 	</section>
 
 {% endblock %}
