@@ -4,14 +4,31 @@
 {% load staticfiles%}
 
 {% block title %}
-	Rest
+	Rest - Index
 {% endblock %}
 
 {% block js %}
 	<script src="{% static 'orders/js/index.js' %}" type="text/javascript"></script>
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', () => {
+			var menu = document.querySelectorAll('.icon-menu');
+			debugger
+			for (i =0; i<menu.length; i++){
+				menu[i].style.color= "#f17060";
+			}
+		});
+	</script>
 {% endblock %}
 
 {% block log %}
+	{% if user %}
+		<a class="icon-exit" href="{% url 'logout' %}" title="Logout"></a>
+	{% else %}
+		<a class="icon-enter" href="{% url 'login' %}" title="Login"></a>
+	{% endif %}
+{% endblock %}
+
+{% block logfooter %}
 	{% if user %}
 		<a class="icon-exit" href="{% url 'logout' %}" title="Logout"></a>
 	{% else %}
@@ -151,4 +168,6 @@
 			</ul>	
 		</div>				
 	</section>
+
+	
 {% endblock %}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Class that defines the types of pizza that exist in this restaurant
 class TypeOfPizza(models.Model):
@@ -109,3 +110,35 @@ class Salad(models.Model):
 	def __str__(self):
 		return f"{self.name} - {self.price} U$"
 
+
+class Order(models.Model):
+	total = models.DecimalField(max_digits=6, decimal_places=2)
+	date_submitted = models.DateField(auto_now_add=True)
+	date_delivered = models.DateField(null=True, blank=True)
+	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
+
+	STATUS_ORDER_CHOICES = (
+		('SUBMITTED', 'Submitted'),
+		('PRODUCTION', 'In Production'),
+		('DELIVERING', 'Left to Deliver'),
+		('DELIVERED', 'Delivered'),
+		('CANCELLED', 'Cancelled'),
+	)
+	status_order = models.CharField(
+		max_length=50,
+		choices=STATUS_ORDER_CHOICES,
+		default='SUBMITTED',
+	)
+
+	def __str__(self):
+		return f"{self.user.username} - {self.status_order} "
+
+
+class ItemOrder(models.Model):
+	description = models.TextField(default="")
+	quantity = models.IntegerField()
+	price = models.DecimalField(max_digits=6, decimal_places=2)
+	order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+
+	def __str__(self):
+		return f"{self.order.user.username} - {self.description} - {self.quantity} - {self.price}"

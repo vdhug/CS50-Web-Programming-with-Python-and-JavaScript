@@ -570,28 +570,32 @@ header nav {
 	margin-top: -12px;
 }
 
-header nav ul li {
+header nav ul li, footer nav ul li {
 	display: inline-block;
 	padding: 20px;
 	font-size: 1.25em;
 }
 
-header nav ul li:before {
+header nav ul li:before, footer nav ul li:before {
 	content: "•";
 	display: inline-block;
 	position: absolute;
 	margin-left: -24px;
 }
 
-header nav ul li:first-child:before {
+header nav ul li:first-child:before, footer nav ul li:first-child:before {
 	display: none;
+}
+
+footer nav ul li a {
+  color: #787367;
 }
 
 header nav ul li a {
 	color: #fff;
 }
 
-header nav ul li a:hover {
+header nav ul li a:hover, footer nav ul li a:hover {
 	color: #f17060;
 }
 
@@ -647,7 +651,6 @@ input::-webkit-inner-spin-button {
   text-transform: none;
   line-height: 1;
   font-size: 1em;
-  color: #FFF;
 
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
@@ -662,10 +665,12 @@ input::-webkit-inner-spin-button {
 }
 .icon-plus:before {
   content: "\ea0a";
+  color: #FFF;
   margin-left: 10px;
 }
 .icon-minus:before {
   content: "\ea0b";	
+  color: #FFF;
   margin-right: 10px;
 }
 .icon-enter:before {
@@ -677,6 +682,9 @@ input::-webkit-inner-spin-button {
 .icon-cross:before {
   content: "\ea0f";
   color: #f17060;
+}
+.icon-orders:before {
+  content: "\e9a3";
 }
 
 .subtitulo {
@@ -901,6 +909,12 @@ tbody tr:nth-child(even) {
     padding-left: 10px;
 }
 
+.cart-body output {
+  font-size: 2.25em;
+    color: #f17060;
+    padding: 0px 100px 10px 0;
+}
+
 .title-topping {
 	color: #4d4d4d;
     font-size: 2em;
@@ -917,7 +931,7 @@ tbody tr:nth-child(even) {
 	text-align: center;
 }
 
-.btn-cart {
+.btn-cart, .btn-cart-finish {
 	padding: 8px 16px;
 	text-align: center;	
 	float: right;
@@ -933,7 +947,7 @@ tbody tr:nth-child(even) {
 	float: left;
 }
 
-.btn-cart:hover, .btn-cart-previous:hover  {
+.btn-cart:hover, .btn-cart-previous:hover, .btn-cart-finish:hover  {
     border-color: #FFF;
 }
 
@@ -1027,6 +1041,10 @@ footer {
 
 .current_page_item a {
 	color: #f17060;
+}
+
+.current_page_item {
+  color: #f17060;
 }
 
 .contato-item h2{

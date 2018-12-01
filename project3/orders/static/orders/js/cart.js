@@ -359,6 +359,50 @@ document.addEventListener('DOMContentLoaded', () => {
 		};
 	});
 
-	
-	
+	// Have each button save the request to the session
+	document.querySelectorAll('.btn-cart-finish').forEach(function(button) {
+		button.onclick = function() {
+			
+			// Select the ul that contains all the toppings from this pizza
+			var items = []
+			var pizzas = document.querySelectorAll('.pizza-details');
+			pizzas.forEach(function(pizza) {
+				const pizza_id = pizza.dataset.id;
+
+				// Select the li that contains the options
+				const options = pizza.children;
+				var toppings = [];
+
+				for (i=1; i<options.length; i++){
+					var topping = options[i].children[0].value;
+					toppings.push(topping);
+				}
+				var item_order = {key: pizza_id, value: toppings};
+				items.push(item_order)
+				
+				
+			});
+			var jsonText = JSON.stringify(items)
+			debugger
+			$.ajax({
+					url: '/submit_order',
+					csrfmiddlewaretoken: '{{ csrf_token }}',
+					type: 'POST',
+					data: {
+						items: jsonText
+					},
+					success: function(data) {
+						debugger
+						location.reload()
+					},
+					failure: function(data) { 
+						debugger
+						alert('Got an error dude');
+						return false;
+					}
+			});
+			return false;
+		};
+	});
+
 });

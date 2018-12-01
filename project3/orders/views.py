@@ -83,7 +83,7 @@ def auth_register(request):
 def auth_login(request):
 	if request.method == "GET":
 		if not request.user.is_authenticated:
-			return render(request, "orders/login.html")
+			return render(request, "orders/login.html", {"user": request.user.is_authenticated})
 		else:
 			return HttpResponseRedirect(reverse("index"))
 	if request.method == "POST":
@@ -101,8 +101,8 @@ def auth_login(request):
 		
 
 def auth_logout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse("index"))
+	logout(request)
+	return HttpResponseRedirect(reverse("index"))
 
 
 @csrf_exempt
@@ -191,7 +191,7 @@ def cart(request):
 		request.session['progress'] = "cart"
 	
 	if not request.session.has_key('address'):
-		pdb.set_trace()
+		
 		request.session['address'] = {
 					"street_name": "",
 					"street_number": "",
@@ -275,7 +275,9 @@ def cart(request):
 			raise Http404("Item in the order does not exist")
 
 	address = request.session['address']
-	
+	progress = request.session['progress']
+	if progress == "finished":
+		request.session['progress'] = "cart"
 	context = {
 				"pizzas": pizzas,
 				"dinners": dinners,
@@ -284,7 +286,7 @@ def cart(request):
 				"salads": salads,
 				"total": total,
 				"toppings": Topping.objects.all(),
-				"progress": request.session['progress'],
+				"progress": progress,
 				"address": address,
 	   			"user": request.user.is_authenticated
 			}
@@ -329,3 +331,102 @@ def update_progress(request):
 
 	except Exception as e:
 		return HttpResponse(f"Failure! {str(e)} - {items}", {"success": False})
+
+
+@csrf_exempt
+def submit_order(request):
+
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(reverse("auth_login"))
+
+	items = json.loads(request.POST.get('items'))
+	items_order = []
+	total = 0.0
+	order = Order(status_order="SUBMITTED", user=request.user, total=total)
+	for item in items:
+		i = PriceOfPizza.objects.get(pk=item['key'])
+		description = f"{i.pizza.name} - {i.sizeOfPizza.size.name} Size - Toppings: "
+		for topping in item['value']:
+			t = Topping.objects.get(pk=topping)
+			description += f" | {t.name} |"
+		total += float(i.price)
+		item_order=  ItemOrder(description=description, quantity=1, price=i.price)
+		items_order.append(item_order)
+
+	if not request.session.has_key('dinner'):
+		request.session['dinner'] = []
+	
+	if not request.session.has_key('sub'):
+		request.session['sub'] = []
+	
+	if not request.session.has_key('pasta'):
+		request.session['pasta'] = []
+	
+	if not request.session.has_key('salad'):
+		request.session['salad'] = []
+	
+	
+	for d in request.session['dinner']:
+		i = PriceOfDinner.objects.get(pk=list(d)[0])
+		total += float(i.price)*int(d[list(d)[0]])
+		description = f"Dinner - {i.dinner.name} - {i.size.name} Size"
+		item_order=  ItemOrder(description=description, quantity=d[list(d)[0]], price=i.price*int(d[list(d)[0]]))
+		items_order.append(item_order)
+
+	for d in request.session['pizza']:
+		i = PriceOfPizza.objects.get(pk=list(d)[0])
+		if not i.pizza.custom:
+			total += float(i.price)*int(d[list(d)[0]])
+			description = f"Pizza - {i.pizza.name} - {i.sizeOfPizza.size.name} Size"
+			item_order=  ItemOrder(description=description, quantity=d[list(d)[0]], price=i.price*int(d[list(d)[0]]))
+			items_order.append(item_order)
+
+	for d in request.session['sub']:
+		i = PriceOfSub.objects.get(pk=list(d)[0])
+		total += float(i.price)*int(d[list(d)[0]])
+		description = f"Sub - {i.sub.name} - {i.size.name} Size"
+		item_order=  ItemOrder(description=description, quantity=d[list(d)[0]], price=i.price*int(d[list(d)[0]]))
+		items_order.append(item_order)
+	
+	for d in request.session['pasta']:
+		i = Pasta.objects.get(pk=list(d)[0])
+		total += float(i.price)*int(d[list(d)[0]])
+		description = f"Pasta - {i.name}"
+		item_order=  ItemOrder(description=description, quantity=d[list(d)[0]], price=i.price*int(d[list(d)[0]]))
+		items_order.append(item_order)
+
+	for d in request.session['salad']:
+		i = Salad.objects.get(pk=list(d)[0])
+		total += float(i.price)*int(d[list(d)[0]])
+		description = f"Salad - {i.name}"
+		item_order=  ItemOrder(description=description, quantity=d[list(d)[0]], price=i.price*int(d[list(d)[0]]))
+		items_order.append(item_order)
+
+
+	order.total = total
+
+	order.save()
+
+	for i in items_order:
+		i.order = order
+		i.save()
+	#pdb.set_trace()
+
+	request.session['progress'] = "finished"
+	
+	request.session['dinner'] = []
+	request.session['pizza'] = []
+	request.session['sub'] = []
+	request.session['salad'] = []
+	request.session['pasta'] = []
+	
+	return HttpResponse("success")
+
+def orders(request):
+
+	orders = request.user.orders
+
+	context = {
+		"orders": orders
+	}
+	return render(request, "orders/orders.html", context)

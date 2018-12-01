@@ -1,7 +1,25 @@
 {% extends "orders/layout.html" %}
 
+{% block title %}
+	Rest - Login
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', () => {
+			var menu = document.querySelectorAll('.icon-enter');
+			debugger
+			for (i =0; i<menu.length; i++){
+				menu[i].classList.add("current_page_item");
+			}
+		});
+	</script>
+{% endblock %}
 
 {% block log %}
+	<a class="icon-enter" href="{% url 'login' %}" title="Login"></a>
+{% endblock %}
+{% block logfooter %}
 	<a class="icon-enter" href="{% url 'login' %}" title="Login"></a>
 {% endblock %}
 

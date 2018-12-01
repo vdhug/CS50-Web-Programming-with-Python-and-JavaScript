@@ -21,7 +21,11 @@
 				<ul>
 					<li><a class="icon-menu" title="Our Menu"  href="{% url 'index' %}"></a></li>
 					<li><a class="icon-cart" title="Shopping cart" href="{% url 'cart' %}"></a></li>
+					{% if user %}
+						<li><a class="icon-orders" href="{% url 'orders' %}" title="My Orders"></a></li>
+					{% endif %}
 					<li>{% block log %} {% endblock %}</li>
+					
 				</ul>
 			</nav>
 
@@ -35,9 +39,14 @@
         {% endblock %}
         
 		<footer>
-			<nav class="nav-footer">
+			<nav>
 				<ul>
-					<li class="current_page_item"><a href="index.html">Menu</a></li>
+					<li><a class="icon-menu" title="Our Menu"  href="{% url 'index' %}"></a></li>
+					<li><a class="icon-cart" title="Shopping cart" href="{% url 'cart' %}"></a></li>
+					{% if user %}
+						<li><a class="icon-orders" href="{% url 'orders' %}" title="My Orders"></a></li>
+					{% endif %}
+					<li>{% block logfooter %} {% endblock %}</li>
 				</ul>
 			</nav>
 

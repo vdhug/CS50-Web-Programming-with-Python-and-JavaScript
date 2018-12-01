@@ -1,0 +1,56 @@
+{% extends "orders/layout.html" %}
+
+{% block title %}
+	Rest - Register
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', () => {
+			var menu = document.querySelectorAll('.icon-orders');
+			debugger
+			for (i =0; i<menu.length; i++){
+				menu[i].style.color= "#f17060";
+			}
+		});
+	</script>
+{% endblock %}
+
+{% block log %}
+	<a class="icon-exit" href="{% url 'logout' %}" title="Logout"></a>
+{% endblock %}
+
+
+{% block logfooter %}
+	<a class="icon-exit" href="{% url 'logout' %}" title="Logout"></a>
+{% endblock %}
+
+
+
+{% block body %}
+	{{orders}}
+	<section class="container">
+		<h2 class="subtitulo">My Orders</h2>
+		<div class="grid-16 cart-head">
+			<ul>
+				<li style="width: 25%">Order</li>
+				<li style="width: 20%">Submitted</li>
+				<li style="width: 20%">Total</li>
+				<li style="width: 15%">Status</li>
+				<li style="width: 15%">Delivered</li>
+			</ul>
+		</div>
+		<div class="grid-16 cart-body">
+			{% for order in orders.all %}
+			<ul>
+				<li style="width: 25%">{{order.id}}</li>
+				<li style="width: 20%">{{order.date_submitted}}</li>
+				<li style="width: 20%">{{order.total}}</li>
+				<li style="width: 15%">{{order.status_order}}</li>
+				<li style="width: 15%">{% if order.date_delivered %} {{order.date_delivered}} {% endif %}</li>
+			</ul>
+			{% endfor %}
+		</div>
+	</section>
+
+{% endblock %}
